@@ -61,6 +61,7 @@ def check_access_denied(fn, *args, **kwargs):
     eq(e.reason, 'Forbidden')
     eq(e.error_code, 'AccessDenied')
 
+
 def check_grants(got, want):
     """
     Check that grants list in got matches the dictionaries in want,
@@ -4012,16 +4013,6 @@ def test_object_copy_zero_size():
     key2 = bucket.get_key('bar321foo')
     eq(key2.size, 0)
 
-# _vp _
-# Some primitive tests
-@attr(method='put')
-@attr(resource='object')
-@attr(operation='primitive test')
-@attr(assertion='works')
-def primitive_test():
-    bucket = get_new_bucket()
-    eq(1, 1)
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy object in same bucket')
@@ -4897,6 +4888,5 @@ def test_region_copy_object():
             conn = r.connection
             e = assert_raises(boto.exception.S3ResponseError, conn.get_bucket, dest_bucket.name)
             eq(e.status, 404)
-
 
 

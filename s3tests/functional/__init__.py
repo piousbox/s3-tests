@@ -242,6 +242,11 @@ def setup():
         template = cfg.get('fixtures', 'bucket prefix')
     except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         template = 'test-{random}-'
+
+    # _vp_
+    with open('/tmp/s3-test.txt', 'w') as f:
+        f.write("\n=== --- template is: %s " % template)
+
     prefix = choose_bucket_prefix(template=template)
 
     # pull the default_region out, if it exists
@@ -336,6 +341,13 @@ def get_new_bucket_name():
     bucket by this name happens to exist, it's ok if tests give
     false negatives.
     """
+
+    global prefix
+
+    # _vp_ 
+    # print "This prefix is: %s " % prefix
+
+
     name = '{prefix}{num}'.format(
         prefix=prefix,
         num=next(bucket_counter),
@@ -355,8 +367,12 @@ def get_new_bucket(target=None, name=None, headers=None):
     connection = target.connection
     if name is None:
         name = get_new_bucket_name()
+
+    print "+++ --- name is %s " % name
+
     # the only way for this to fail with a pre-existing bucket is if
     # someone raced us between setup nuke_prefixed_buckets and here;
     # ignore that as astronomically unlikely
     bucket = connection.create_bucket(name, location=target.conf.api_name, headers=headers)
+
     return bucket
