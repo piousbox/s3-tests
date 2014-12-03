@@ -1,0 +1,27 @@
+#!/usr/bin/ruby
+
+if 1 != ARGV.length
+  puts "Usage: ./jenkins_tests x.x.x.x"
+  puts "where x.x.x.x is the IP of the machine under test"
+  exit
+end
+
+def puts! args, label=""
+  puts "+++ +++ #{label}"
+  puts args.inspect
+end
+
+client_ip = ARGV[0]
+
+` cp local.conf.example local.conf `
+` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
+
+` S3TEST_CONF=local.conf \
+  ./virtualenv/bin/nosetests s3tests.functional.test_s3 && \
+  ./virtualenv/bin/nosetests s3tests.functional.test_headers `
+
+exit_status = `echo $?`.strip.to_i
+
+puts! exit_status, "exit status of Swift S3 Tests"
+
+exit exit_status
