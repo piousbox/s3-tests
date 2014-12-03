@@ -16,9 +16,8 @@ client_ip = ARGV[0]
 ` cp local.conf.example local.conf `
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
 
-` S3TEST_CONF=local.conf \
-  ./virtualenv/bin/nosetests s3tests.functional.test_s3 && \
-  ./virtualenv/bin/nosetests s3tests.functional.test_headers `
+` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 && \
+  S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_headers `
 
 exit_status = `echo $?`.strip.to_i
 
