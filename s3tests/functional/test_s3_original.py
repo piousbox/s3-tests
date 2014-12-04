@@ -61,6 +61,7 @@ def check_access_denied(fn, *args, **kwargs):
     eq(e.reason, 'Forbidden')
     eq(e.error_code, 'AccessDenied')
 
+
 def check_grants(got, want):
     """
     Check that grants list in got matches the dictionaries in want,
@@ -122,15 +123,11 @@ def _get_keys_prefixes(li):
     figure out which of the strings in a list are actually keys
     return lists of strings that are (keys) and are not (prefixes)
     """
-    # _vp_ 20141017
-    for i in li:
-        print "A4# - list item is: %s" % i
-
     keys = [x for x in li if isinstance(x, boto.s3.key.Key)]
     prefixes = [x for x in li if not isinstance(x, boto.s3.key.Key)]
     return (keys, prefixes)
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -153,7 +150,7 @@ def test_bucket_list_many():
     eq(l.is_truncated, False)
     names = [e.name for e in l]
     eq(names, ['foo'])
-'''
+
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -207,7 +204,6 @@ def validate_bucket_list(bucket, prefix, delimiter, marker, max_keys,
 
     return li.next_marker
 
-a = '''
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list')
@@ -222,6 +218,7 @@ def test_bucket_list_delimiter_prefix():
     marker = validate_bucket_list(bucket, prefix, delim, '', 1, True, ['asdf'], [], 'asdf')
     marker = validate_bucket_list(bucket, prefix, delim, marker, 1, True, [], ['boo/'], 'boo/')
     marker = validate_bucket_list(bucket, prefix, delim, marker, 1, False, [], ['cquux/'], None)
+
     marker = validate_bucket_list(bucket, prefix, delim, '', 2, True, ['asdf'], ['boo/'], 'boo/')
     marker = validate_bucket_list(bucket, prefix, delim, marker, 2, False, [], ['cquux/'], None)
 
@@ -229,8 +226,8 @@ def test_bucket_list_delimiter_prefix():
 
     marker = validate_bucket_list(bucket, prefix, delim, '', 1, True, ['boo/bar'], [], 'boo/bar')
     marker = validate_bucket_list(bucket, prefix, delim, marker, 1, False, [], ['boo/baz/'], None)
+
     marker = validate_bucket_list(bucket, prefix, delim, '', 2, False, ['boo/bar'], ['boo/baz/'], None)
-'''
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -321,7 +318,7 @@ def test_bucket_list_delimiter_not_exist():
     eq(names, key_names)
     eq(prefixes, [])
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix')
@@ -336,9 +333,8 @@ def test_bucket_list_prefix_basic():
     names = [e.name for e in keys]
     eq(names, ['foo/bar', 'foo/baz'])
     eq(prefixes, [])
-'''
 
-a = '''
+
 # just testing that we can do the delimeter and prefix logic on non-slashes
 @attr(resource='bucket')
 @attr(method='get')
@@ -354,7 +350,7 @@ def test_bucket_list_prefix_alt():
     names = [e.name for e in keys]
     eq(names, ['bar', 'baz'])
     eq(prefixes, [])
-'''
+
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -389,7 +385,7 @@ def test_bucket_list_prefix_none():
     eq(names, key_names)
     eq(prefixes, [])
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix')
@@ -403,9 +399,8 @@ def test_bucket_list_prefix_not_exist():
     (keys, prefixes) = _get_keys_prefixes(li)
     eq(keys, [])
     eq(prefixes, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix')
@@ -420,9 +415,8 @@ def test_bucket_list_prefix_unreadable():
     (keys, prefixes) = _get_keys_prefixes(li)
     eq(keys, [])
     eq(prefixes, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
@@ -440,9 +434,8 @@ def test_bucket_list_prefix_delimiter_basic():
 
     prefix_names = [e.name for e in prefixes]
     eq(prefix_names, ['foo/baz/'])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
@@ -460,9 +453,8 @@ def test_bucket_list_prefix_delimiter_alt():
 
     prefix_names = [e.name for e in prefixes]
     eq(prefix_names, ['baza'])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
@@ -475,9 +467,8 @@ def test_bucket_list_prefix_delimiter_prefix_not_exist():
     (keys, prefixes) = _get_keys_prefixes(li)
     eq(keys, [])
     eq(prefixes, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
@@ -491,9 +482,8 @@ def test_bucket_list_prefix_delimiter_delimiter_not_exist():
     names = [e.name for e in keys]
     eq(names, ['b/a/c', 'b/a/g', 'b/a/r'])
     eq(prefixes, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list under prefix w/delimiter')
@@ -506,9 +496,8 @@ def test_bucket_list_prefix_delimiter_prefix_delimiter_not_exist():
     (keys, prefixes) = _get_keys_prefixes(li)
     eq(keys, [])
     eq(prefixes, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -527,9 +516,8 @@ def test_bucket_list_maxkeys_one():
     eq(li.is_truncated, False)
     names = [e.name for e in li]
     eq(names, key_names[1:])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -540,7 +528,7 @@ def test_bucket_list_maxkeys_zero():
     li = bucket.get_all_keys(max_keys=0)
     eq(li.is_truncated, False)
     eq(li, [])
-'''
+
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -556,7 +544,7 @@ def test_bucket_list_maxkeys_none():
     eq(names, key_names)
     eq(li.MaxKeys, '1000')
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -568,9 +556,8 @@ def test_bucket_list_maxkeys_invalid():
     eq(e.status, 400)
     eq(e.reason, 'Bad Request')
     eq(e.error_code, 'InvalidArgument')
-'''
 
-a = '''
+
 @attr('fails_on_rgw')
 @attr(resource='bucket')
 @attr(method='get')
@@ -586,7 +573,7 @@ def test_bucket_list_maxkeys_unreadable():
     # also funny is the Amazon tells us that it's not an interger or within an
     # integer range. Is 'blah' in the integer range?
     eq(e.error_code, 'InvalidArgument')
-'''
+
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -614,7 +601,7 @@ def test_bucket_list_marker_empty():
     names = [e.name for e in li]
     eq(names, key_names)
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -628,9 +615,8 @@ def test_bucket_list_marker_unreadable():
     eq(li.is_truncated, False)
     names = [e.name for e in li]
     eq(names, key_names)
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -642,9 +628,8 @@ def test_bucket_list_marker_not_in_list():
     eq(li.marker, 'blah')
     names = [e.name for e in li]
     eq(names, ['foo', 'quxx'])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -656,9 +641,8 @@ def test_bucket_list_marker_after_list():
     eq(li.marker, 'zzz')
     eq(li.is_truncated, False)
     eq(li, [])
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all keys')
@@ -672,7 +656,7 @@ def test_bucket_list_marker_before_list():
     eq(li.is_truncated, False)
     names = [e.name for e in li]
     eq(names, key_names)
-'''
+
 
 def _compare_dates(iso_datetime, http_datetime):
     """
@@ -696,7 +680,6 @@ def _compare_dates(iso_datetime, http_datetime):
                 date2=http_datetime,
                 )
 
-a = '''
 @attr(resource='object')
 @attr(method='head')
 @attr(operation='compare w/bucket list')
@@ -733,9 +716,8 @@ def test_bucket_list_return_data():
         eq(key.size, key_data['size'])
         eq(key.owner.id, key_data['user_id'])
         _compare_dates(key.last_modified, key_data['last_modified'])
-'''
 
-a = '''
+
 @attr(resource='object.metadata')
 @attr(method='head')
 @attr(operation='modification-times')
@@ -754,7 +736,7 @@ def test_bucket_list_object_time():
         iso_datetime = key.last_modified
 
     _compare_dates(iso_datetime, http_datetime)
-'''
+
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -770,7 +752,7 @@ def test_bucket_notexist():
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchBucket')
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='delete')
 @attr(operation='non-existant bucket')
@@ -782,9 +764,7 @@ def test_bucket_delete_notexist():
     eq(e.status, 404)
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchBucket')
-'''
 
-a = '''
 @attr(resource='bucket')
 @attr(method='delete')
 @attr(operation='non-empty bucket')
@@ -801,9 +781,7 @@ def test_bucket_delete_nonempty():
     eq(e.status, 409)
     eq(e.reason, 'Conflict')
     eq(e.error_code, 'BucketNotEmpty')
-'''
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='non-existant bucket')
@@ -817,9 +795,8 @@ def test_object_write_to_nonexist_bucket():
     eq(e.status, 404)
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchBucket')
-'''
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='del')
 @attr(operation='deleted bucket')
@@ -836,9 +813,8 @@ def test_bucket_create_delete():
     eq(e.status, 404)
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchBucket')
-'''
 
-a = '''
+
 @attr(resource='object')
 @attr(method='get')
 @attr(operation='read contents that were never written')
@@ -850,7 +826,7 @@ def test_object_read_notexist():
     eq(e.status, 404)
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchKey')
-'''
+
 
 # While the test itself passes, there's a SAX parser error during teardown. It
 # seems to be a boto bug.  It happens with both amazon and dho.
@@ -864,7 +840,7 @@ def test_object_create_unreadable():
     key = bucket.new_key('\x0a')
     key.set_contents_from_string('bar')
 
-a = '''
+
 @attr(resource='object')
 @attr(method='post')
 @attr(operation='delete multiple objects')
@@ -884,9 +860,7 @@ def test_multi_object_delete():
         result = bucket.delete_keys(stored_keys)
         eq(len(result.deleted), 2)
         eq(len(result.errors), 0)
-'''
 
-a = '''
 @attr(resource='object')
 @attr(method='all')
 @attr(operation='complete object life cycle')
@@ -906,7 +880,7 @@ def test_object_write_read_update_read_delete():
     eq(got, 'soup')
     # Delete
     key.delete()
-'''
+
 
 def _set_get_metadata(metadata, bucket=None):
     """
@@ -923,7 +897,7 @@ def _set_get_metadata(metadata, bucket=None):
     key2 = bucket.get_key('foo')
     return key2.get_metadata('meta1')
 
-a = '''
+
 @attr(resource='object.metadata')
 @attr(method='put')
 @attr(operation='metadata write/re-read')
@@ -995,7 +969,7 @@ def test_object_set_get_non_utf8_metadata():
     key2 = bucket.get_key('foo')
     got = key2.get_metadata('meta1')
     eq(got, '=?UTF-8?Q?=04mymeta?=')
-'''
+
 
 def _set_get_metadata_unreadable(metadata, bucket=None):
     """
@@ -1008,7 +982,7 @@ def _set_get_metadata_unreadable(metadata, bucket=None):
     got = decode_header(got)
     return got
 
-a = '''
+
 @attr(resource='object.metadata')
 @attr(method='put')
 @attr(operation='metadata write')
@@ -1080,7 +1054,7 @@ def test_object_set_get_metadata_overwrite_to_unreadable_infix():
     metadata2 = 'h\x05w'
     got2 = _set_get_metadata_unreadable(metadata2)
     eq(got2, [(metadata2, 'utf-8')])
-'''
+
 
 @attr(resource='object')
 @attr(method='put')
@@ -1103,7 +1077,7 @@ def test_object_metadata_replaced_on_put():
     got = key3.get_metadata('meta1')
     assert got is None, "did not expect to see metadata: %r" % got
 
-a = '''
+
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='data write from file (w/100-Continue)')
@@ -1118,7 +1092,7 @@ def test_object_write_file():
     key.set_contents_from_file(fp=data)
     got = key.get_contents_as_string()
     eq(got, 'bar')
-'''
+
 
 def _get_post_url(conn, bucket):
 
@@ -1126,7 +1100,6 @@ def _get_post_url(conn, bucket):
                     host=conn.host, port=conn.port, bucket=bucket.name)
 	return url
 
-a = '''
 @attr(resource='object')
 @attr(method='post')
 @attr(operation='anonymous browser based upload via POST request')
@@ -1144,9 +1117,8 @@ def test_post_object_anonymous_request():
 	key = bucket.get_key("foo.txt")
 	got = key.get_contents_as_string()
 	eq(got, 'bar')
-'''
 
-a = '''
+
 @attr(resource='object')
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
@@ -1202,7 +1174,7 @@ def test_post_object_set_success_code():
 	eq(r.status_code, 201)
 	message = ET.fromstring(r.content).find('Key')
 	eq(message.text,'foo.txt')
-'''
+
 
 @attr(resource='object')
 @attr(method='post')
@@ -1221,7 +1193,7 @@ def test_post_object_set_invalid_success_code():
 	eq(r.status_code, 204)
 	eq(r.content,'')
 
-a = '''
+
 @attr(resource='object')
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
@@ -1298,7 +1270,7 @@ def test_post_object_set_key_from_filename():
 	key = bucket.get_key("foo.txt")
 	got = key.get_contents_as_string()
 	eq(got, 'bar')
-'''
+
 
 @attr(resource='object')
 @attr(method='post')
@@ -1369,7 +1341,7 @@ def test_post_object_case_insensitive_condition_fields():
 	r = requests.post(url, files = payload)
 	eq(r.status_code, 204)
 
-a = '''
+
 @attr(resource='object')
 @attr(method='post')
 @attr(operation='authenticated browser based upload via POST request')
@@ -1691,8 +1663,6 @@ def test_post_object_user_specified_header():
 	payload = OrderedDict([ ("key" , "foo.txt"),("AWSAccessKeyId" , conn.aws_access_key_id),\
 	("acl" , "private"),("signature" , signature),("policy" , policy),\
 	("Content-Type" , "text/plain"),('x-amz-meta-foo' , 'barclamp'),('file', ('bar'))])
-
-        print "++@ -00 URL is: %s" % url
 
 	r = requests.post(url, files = payload)
 	eq(r.status_code, 204)
@@ -2078,7 +2048,7 @@ def test_post_object_upload_size_below_minimum():
 
 	r = requests.post(url, files = payload)
 	eq(r.status_code, 400)
-'''
+
 
 def _setup_request(bucket_acl=None, object_acl=None):
     """
@@ -2156,7 +2126,7 @@ def _make_bucket_request(method, bucket, body=None, authenticated=False):
     print res.status, res.reason
     return res
 
-a = '''
+
 @attr(resource='object')
 @attr(method='get')
 @attr(operation='publically readable bucket')
@@ -2166,7 +2136,7 @@ def test_object_raw_get():
     res = _make_request('GET', bucket, key)
     eq(res.status, 200)
     eq(res.reason, 'OK')
-'''
+
 
 @attr(resource='object')
 @attr(method='get')
@@ -2207,7 +2177,7 @@ def _head_bucket(bucket, authenticated=True):
 
     return (int(obj_count), int(bytes_used))
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='head')
 @attr(operation='head bucket')
@@ -2326,7 +2296,7 @@ def test_object_raw_authenticated_object_acl():
     res = _make_request('GET', bucket, key, authenticated=True)
     eq(res.status, 200)
     eq(res.reason, 'OK')
-'''
+
 
 @attr(resource='object')
 @attr(method='get')
@@ -2354,7 +2324,7 @@ def test_object_raw_authenticated_object_gone():
     eq(res.status, 404)
     eq(res.reason, 'Not Found')
 
-a = '''
+
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='unauthenticated, no object acls')
@@ -2366,7 +2336,7 @@ def test_object_raw_put():
     res = _make_request('PUT', bucket, key, body='foo')
     eq(res.status, 403)
     eq(res.reason, 'Forbidden')
-'''
+
 
 @attr(resource='object')
 @attr(method='put')
@@ -2405,7 +2375,7 @@ def check_bad_bucket_name(name):
     eq(e.reason, 'Bad Request')
     eq(e.error_code, 'InvalidBucketName')
 
-a = ''' 
+
 # AWS does not enforce all documented bucket restrictions.
 # http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?BucketRestrictions.html
 @attr('fails_on_aws')
@@ -2447,7 +2417,6 @@ def test_bucket_create_naming_bad_short_one():
 def test_bucket_create_naming_bad_short_two():
     check_bad_bucket_name('aa')
 
-
 # Breaks DNS with SubdomainCallingFormat
 @attr('fails_with_subdomain')
 @attr(resource='bucket')
@@ -2458,7 +2427,7 @@ def test_bucket_create_naming_bad_long():
     check_bad_bucket_name(256*'a')
     check_bad_bucket_name(280*'a')
     check_bad_bucket_name(3000*'a')
-'''
+
 
 def check_good_bucket_name(name, _prefix=None):
     """
@@ -2571,7 +2540,7 @@ def test_bucket_list_long_name():
     got = list(got)
     eq(got, [])
 
-a = '''
+
 # AWS does not enforce all documented bucket restrictions.
 # http://docs.amazonwebservices.com/AmazonS3/2006-03-01/dev/index.html?BucketRestrictions.html
 @attr('fails_on_aws')
@@ -2592,7 +2561,7 @@ def test_bucket_create_naming_bad_ip():
 def test_bucket_create_naming_bad_punctuation():
     # characters other than [a-zA-Z0-9._-]
     check_bad_bucket_name('alpha!soup')
-'''
+
 
 # test_bucket_create_naming_dns_* are valid but not recommended
 @attr(resource='bucket')
@@ -2665,7 +2634,7 @@ def test_bucket_create_exists():
     # REST idempotency means this should be a nop
     get_new_bucket(targets.main.default, bucket.name)
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='re-create by non-owner')
@@ -3078,7 +3047,6 @@ def test_object_acl_canned_bucketownerfullcontrol():
 
     key.delete()
     bucket.delete()
-'''
 
 @attr(resource='bucket')
 @attr(method='ACLs')
@@ -3124,7 +3092,7 @@ def _build_bucket_acl_xml(permission, bucket=None):
             ],
         )
 
-a = '''
+
 @attr(resource='bucket.acls')
 @attr(method='ACLs')
 @attr(operation='set acl FULL_CONTROL (xml)')
@@ -3163,7 +3131,7 @@ def test_bucket_acl_xml_read():
 @attr(assertion='reads back correctly')
 def test_bucket_acl_xml_readacp():
     _build_bucket_acl_xml('READ_ACP')
-'''
+
 
 def _build_object_acl_xml(permission):
     """
@@ -3194,7 +3162,7 @@ def _build_object_acl_xml(permission):
             ],
         )
 
-a = '''
+
 @attr(resource='object')
 @attr(method='ACLs')
 @attr(operation='set acl FULL_CONTROL (xml)')
@@ -3233,7 +3201,7 @@ def test_object_acl_xml_read():
 @attr(assertion='reads back correctly')
 def test_object_acl_xml_readacp():
     _build_object_acl_xml('READ_ACP')
-'''
+
 
 def _bucket_acl_grant_userid(permission):
     """
@@ -3334,7 +3302,7 @@ def _check_bucket_acl_grant_cant_writeacp(bucket):
     bucket2 = s3.alt.get_bucket(bucket.name, validate=False)
     check_access_denied(bucket2.set_acl, 'public-read')
 
-a = '''
+
 @attr(resource='bucket')
 @attr(method='ACLs')
 @attr(operation='set acl w/userid FULL_CONTROL')
@@ -3385,7 +3353,6 @@ def test_bucket_acl_grant_userid_readacp():
     # can't write acp
     #_check_bucket_acl_grant_cant_writeacp_can_readacp(bucket)
     _check_bucket_acl_grant_cant_writeacp(bucket)
-
 
 @attr(resource='bucket')
 @attr(method='ACLs')
@@ -3468,7 +3435,6 @@ def test_bucket_acl_no_grants():
 
     # can write acl
     bucket.set_acl('private')
-'''
 
 def _get_acl_header(user=None, perms=None):
     all_headers = ["read", "write", "read-acp", "write-acp", "full-control"]
@@ -3487,7 +3453,6 @@ def _get_acl_header(user=None, perms=None):
 
     return headers
 
-a = '''
 @attr(resource='object')
 @attr(method='PUT')
 @attr(operation='add all grants to user through headers')
@@ -3694,7 +3659,7 @@ def test_logging_toggle():
     bucket.enable_logging(target_bucket=log_bucket, target_prefix=bucket.name)
     bucket.disable_logging()
     # NOTE: this does not actually test whether or not logging works
-'''
+
 
 def _setup_access(bucket_acl, object_acl):
     """
@@ -3725,7 +3690,7 @@ def _setup_access(bucket_acl, object_acl):
 def get_bucket_key_names(bucket):
     return frozenset(k.name for k in bucket.list())
 
-a = '''
+
 @attr(resource='object')
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: private/private')
@@ -3854,7 +3819,6 @@ def test_access_bucket_publicreadwrite_object_publicread():
     eq(get_bucket_key_names(obj.bucket2), frozenset(['foo', 'bar']))
     obj.new.set_contents_from_string('newcontent')
 
-
 @attr(resource='object')
 @attr(method='ACLs')
 @attr(operation='set bucket/object acls: public-read-write/public-read-write')
@@ -3868,7 +3832,6 @@ def test_access_bucket_publicreadwrite_object_publicreadwrite():
     obj.b2.set_contents_from_string('baroverwrite')
     eq(get_bucket_key_names(obj.bucket2), frozenset(['foo', 'bar']))
     obj.new.set_contents_from_string('newcontent')
-'''
 
 @attr(resource='object')
 @attr(method='put')
@@ -3881,7 +3844,6 @@ def test_object_set_valid_acl():
     key.set_contents_from_string('bar')
     key.set_xml_acl(XML_1)
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='set object acls')
@@ -3898,7 +3860,6 @@ def test_object_giveaway():
     eq(e.reason, 'Forbidden')
     eq(e.error_code, 'AccessDenied')
 
-
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all buckets')
@@ -3910,7 +3871,6 @@ def test_buckets_create_then_list():
     for bucket in create_buckets:
         if bucket.name not in names:
             raise RuntimeError("S3 implementation's GET on Service did not return bucket we created: %r", bucket.name)
-'''
 
 # Common code to create a connection object, which'll use bad authorization information
 def _create_connection_bad_auth():
@@ -3927,7 +3887,6 @@ def _create_connection_bad_auth():
         )
     return conn
 
-a = '''
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all buckets (anonymous)')
@@ -3943,7 +3902,6 @@ def test_list_buckets_anonymous():
     buckets = conn.get_all_buckets()
     eq(len(buckets), 0)
 
-
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='list all buckets (bad auth)')
@@ -3954,7 +3912,6 @@ def test_list_buckets_bad_auth():
     eq(e.status, 403)
     eq(e.reason, 'Forbidden')
     eq(e.error_code, 'AccessDenied')
-'''
 
 @attr(resource='bucket')
 @attr(method='put')
@@ -4029,7 +3986,6 @@ def test_bucket_create_special_key_names():
     names = [e.name for e in list(li)]
     eq(names, key_names)
 
-a = '''
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='create and list objects with underscore as prefix, list using prefix')
@@ -4044,7 +4000,6 @@ def test_bucket_list_special_prefix():
     li2 = bucket.get_all_keys(prefix='_bla/')
     eq(len(li2), 4)
 
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy zero sized object in same bucket')
@@ -4057,19 +4012,7 @@ def test_object_copy_zero_size():
     key.copy(bucket, 'bar321foo')
     key2 = bucket.get_key('bar321foo')
     eq(key2.size, 0)
-'''
 
-# _vp _
-# Some primitive tests
-@attr(method='put')
-@attr(resource='object')
-@attr(operation='primitive test')
-@attr(assertion='works')
-def primitive_test():
-    bucket = get_new_bucket()
-    eq(1, 1)
-
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy object in same bucket')
@@ -4081,7 +4024,6 @@ def test_object_copy_same_bucket():
     key.copy(bucket, 'bar321foo')
     key2 = bucket.get_key('bar321foo')
     eq(key2.get_contents_as_string(), 'foo')
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4095,7 +4037,6 @@ def test_object_copy_to_itself():
     eq(e.status, 400)
     eq(e.reason, 'Bad Request')
     eq(e.error_code, 'InvalidRequest')
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4113,7 +4054,6 @@ def test_object_copy_to_itself_with_metadata():
     md = key2.get_metadata('foo')
     eq(md, 'bar')
 
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='copy object from different bucket')
@@ -4125,7 +4065,6 @@ def test_object_copy_diff_bucket():
     key.copy(buckets[1], 'bar321foo')
     key2 = buckets[1].get_key('bar321foo')
     eq(key2.get_contents_as_string(), 'foo')
-
 
 # is this a necessary check? a NoneType object is being touched here
 # it doesn't get to the S3 level
@@ -4143,7 +4082,6 @@ def test_object_copy_not_owned_bucket():
         key.copy(buckets[1], 'bar321foo')
     except AttributeError:
         pass
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4165,7 +4103,6 @@ def test_object_copy_canned_acl():
     res = _make_request('GET', bucket, key3)
     eq(res.status, 200)
     eq(res.reason, 'OK')
-'''
 
 def transfer_part(bucket, mp_id, mp_keyname, i, part):
     """Transfer a part of a multipart upload. Designed to be run in parallel.
@@ -4212,7 +4149,6 @@ def _multipart_upload(bucket, s3_key_name, size, do_list=None, headers=None, met
 
     return upload
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='complete multi-part upload')
@@ -4232,7 +4168,6 @@ def test_multipart_upload():
     k=bucket.get_key(key)
     eq(k.metadata['foo'], 'bar')
     eq(k.content_type, content_type)
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4258,7 +4193,6 @@ def test_multipart_upload_multiple_sizes():
 
     upload = _multipart_upload(bucket, key, 10 * 1024 * 1024)
     upload.complete_upload()
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4346,7 +4280,6 @@ def test_list_multipart_upload():
     upload1.cancel_upload()
     upload2.cancel_upload()
     upload3.cancel_upload()
-'''
 
 def _simple_http_req_100_cont(host, port, is_secure, method, resource):
     """
@@ -4379,7 +4312,6 @@ def _simple_http_req_100_cont(host, port, is_secure, method, resource):
 
     return l[1]
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='w/expect continue')
@@ -4396,7 +4328,6 @@ def test_100_continue():
 
     status = _simple_http_req_100_cont(s3.main.host, s3.main.port, s3.main.is_secure, 'PUT', resource)
     eq(status, '100')
-'''
 
 def _test_bucket_acls_changes_persistent(bucket):
     """
@@ -4406,7 +4337,6 @@ def _test_bucket_acls_changes_persistent(bucket):
     for p in perms:
         _build_bucket_acl_xml(p, bucket)
 
-a = '''
 @attr(resource='bucket')
 @attr(method='put')
 @attr(operation='acl set')
@@ -4414,7 +4344,6 @@ a = '''
 def test_bucket_acls_changes_persistent():
     bucket = get_new_bucket()
     _test_bucket_acls_changes_persistent(bucket);
-
 
 @attr(resource='bucket')
 @attr(method='put')
@@ -4424,7 +4353,6 @@ def test_stress_bucket_acls_changes():
     bucket = get_new_bucket()
     for i in xrange(10):
         _test_bucket_acls_changes_persistent(bucket);
-
 
 @attr(resource='bucket')
 @attr(method='put')
@@ -4459,7 +4387,6 @@ def test_set_cors():
 
     e = assert_raises(boto.exception.S3ResponseError, bucket.get_cors)
     eq(e.status, 404)
-'''
 
 def _cors_request_and_check(func, url, headers, expect_status, expect_allow_origin, expect_allow_methods):
     r = func(url, headers=headers)
@@ -4467,8 +4394,9 @@ def _cors_request_and_check(func, url, headers, expect_status, expect_allow_orig
 
     assert r.headers['access-control-allow-origin'] == expect_allow_origin
     assert r.headers['access-control-allow-methods'] == expect_allow_methods
+
     
-a = '''
+
 @attr(resource='bucket')
 @attr(method='get')
 @attr(operation='check cors response when origin header set')
@@ -4535,7 +4463,7 @@ def test_cors_origin_response():
     _cors_request_and_check(requests.options, url, {'Origin': 'bla.prefix', 'Access-Control-Request-Method': 'GET'}, 403, None, None)
     _cors_request_and_check(requests.options, url, {'Origin': 'foo.put', 'Access-Control-Request-Method': 'GET'}, 403, None, None)
     _cors_request_and_check(requests.options, url, {'Origin': 'foo.put', 'Access-Control-Request-Method': 'PUT'}, 200, 'foo.put', 'PUT')
-'''
+
 
 class FakeFile(object):
     """
@@ -4660,14 +4588,12 @@ def _test_atomic_read(file_size):
 
     _verify_atomic_key_data(key, file_size, 'B')
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='read atomicity')
 @attr(assertion='1MB successful')
 def test_atomic_read_1mb():
     _test_atomic_read(1024*1024)
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4676,14 +4602,12 @@ def test_atomic_read_1mb():
 def test_atomic_read_4mb():
     _test_atomic_read(1024*1024*4)
 
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='read atomicity')
 @attr(assertion='8MB successful')
 def test_atomic_read_8mb():
     _test_atomic_read(1024*1024*8)
-'''
 
 def _test_atomic_write(file_size):
     """
@@ -4716,14 +4640,12 @@ def _test_atomic_write(file_size):
     # verify B's
     _verify_atomic_key_data(key, file_size, 'B')
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='write atomicity')
 @attr(assertion='1MB successful')
 def test_atomic_write_1mb():
     _test_atomic_write(1024*1024)
-
 
 @attr(resource='object')
 @attr(method='put')
@@ -4732,14 +4654,12 @@ def test_atomic_write_1mb():
 def test_atomic_write_4mb():
     _test_atomic_write(1024*1024*4)
 
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='write atomicity')
 @attr(assertion='8MB successful')
 def test_atomic_write_8mb():
     _test_atomic_write(1024*1024*8)
-'''
 
 def _test_atomic_dual_write(file_size):
     """
@@ -4765,7 +4685,6 @@ def _test_atomic_dual_write(file_size):
     # verify the file
     _verify_atomic_key_data(key, file_size)
 
-a = '''
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='write one or the other')
@@ -4787,7 +4706,6 @@ def test_atomic_dual_write_4mb():
 def test_atomic_dual_write_8mb():
     _test_atomic_dual_write(1024*1024*8)
 
-
 @attr(resource='object')
 @attr(method='put')
 @attr(operation='write file in deleted bucket')
@@ -4807,7 +4725,6 @@ def test_atomic_write_bucket_gone():
     eq(e.status, 404)
     eq(e.reason, 'Not Found')
     eq(e.error_code, 'NoSuchBucket')
-
 
 @attr(resource='object')
 @attr(method='get')
@@ -4829,7 +4746,6 @@ def test_ranged_request_response_code():
 
     eq(fetched_content, content[4:8])
     eq(status, 206)
-'''
 
 def check_can_test_multiregion():
     if not targets.main.master or len(targets.main.secondaries) == 0:
@@ -4972,6 +4888,5 @@ def test_region_copy_object():
             conn = r.connection
             e = assert_raises(boto.exception.S3ResponseError, conn.get_bucket, dest_bucket.name)
             eq(e.status, 404)
-
 
 

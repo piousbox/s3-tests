@@ -3,7 +3,7 @@
 ## sections, you can place these variables also directly there
 
 ## replace with e.g. "localhost" to run against local software
-host = gw0.nexenta.corp
+host = <machine-being-tested>
 
 ## uncomment the port to use something other than 80
 port = 9982
