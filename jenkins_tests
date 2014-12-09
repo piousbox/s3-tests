@@ -11,9 +11,9 @@ def puts! args, label=""
   puts args.inspect
 end
 
-puts! client_ip, "The machine being tested is"
-
 client_ip = ARGV[0]
+
+puts! client_ip, "The machine being tested is"
 
 ` cp local.conf.example local.conf `
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
