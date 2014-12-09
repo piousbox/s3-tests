@@ -11,6 +11,8 @@ def puts! args, label=""
   puts args.inspect
 end
 
+puts! client_ip, "The machine being tested is"
+
 client_ip = ARGV[0]
 
 ` cp local.conf.example local.conf `
