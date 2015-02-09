@@ -13,7 +13,12 @@ end
 
 client_ip = ARGV[0]
 
+` sudo apt-get install python-virtualenv -y &&
+  ./bootstrap &&
+  patch virtualenv/local/lib/python2.7/site-packages/boto/s3/connection.py < patches/20150208.bad_status_line.patch `
+
 ` cp local.conf.example local.conf `
+
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
 
 ` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 &&
