@@ -9,8 +9,9 @@
 *.pyo
 
 /*.egg-info
-## we hacked the boto library and made it our own
-##/virtualenv
+/virtualenv
 
 config.yaml
 local.conf
+
+*trash
