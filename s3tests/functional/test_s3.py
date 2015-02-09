@@ -1,3 +1,4 @@
+from __future__ import print_function
 from cStringIO import StringIO
 import boto.exception
 import boto.s3.connection
@@ -20,6 +21,7 @@ import hmac
 import sha
 import pytz
 import json
+import time
 
 import xml.etree.ElementTree as ET
 
@@ -122,9 +124,6 @@ def _get_keys_prefixes(li):
     figure out which of the strings in a list are actually keys
     return lists of strings that are (keys) and are not (prefixes)
     """
-    # _vp_ 20141017
-    for i in li:
-        print "A4# - list item is: %s" % i
 
     keys = [x for x in li if isinstance(x, boto.s3.key.Key)]
     prefixes = [x for x in li if not isinstance(x, boto.s3.key.Key)]
@@ -763,7 +762,7 @@ def test_bucket_list_object_time():
 def test_bucket_notexist():
     # generate a (hopefully) unique, not-yet existent bucket name
     name = '{prefix}foo'.format(prefix=get_prefix())
-    print 'Trying bucket {name!r}'.format(name=name)
+    # print 'Trying bucket {name!r}'.format(name=name)
 
     e = assert_raises(boto.exception.S3ResponseError, s3.main.get_bucket, name)
     eq(e.status, 404)
@@ -2116,6 +2115,10 @@ def _make_request(method, bucket, key, body=None, authenticated=False, response_
         url = key.generate_url(100000, method=method, response_headers=response_headers)
         o = urlparse(url)
         path = o.path + '?' + o.query
+        path = path.replace(' ', '%20')
+        print("+++ aaa")
+        print(path)
+
     else:
         path = '/{bucket}/{obj}'.format(bucket=key.bucket.name, obj=key.name)
 
@@ -2128,7 +2131,7 @@ def _make_request(method, bucket, key, body=None, authenticated=False, response_
     c.request(method, path, body=body)
     res = c.getresponse()
 
-    print res.status, res.reason
+    #print res.status, res.reason
     return res
 
 def _make_bucket_request(method, bucket, body=None, authenticated=False):
@@ -2153,7 +2156,7 @@ def _make_bucket_request(method, bucket, body=None, authenticated=False):
     c.request(method, path, body=body)
     res = c.getresponse()
 
-    print res.status, res.reason
+    #print res.status, res.reason
     return res
 
 a = '''
@@ -3109,7 +3112,7 @@ def _build_bucket_acl_xml(permission, bucket=None):
         bucket = get_new_bucket()
     bucket.set_xml_acl(XML)
     policy = bucket.get_acl()
-    print repr(policy)
+    #print repr(policy)
     check_grants(
         policy.acl.grants,
         [
@@ -3179,7 +3182,7 @@ def _build_object_acl_xml(permission):
     key.set_contents_from_string('bar')
     key.set_xml_acl(XML)
     policy = key.get_acl()
-    print repr(policy)
+    #print repr(policy)
     check_grants(
         policy.acl.grants,
         [
@@ -4004,6 +4007,7 @@ def test_bucket_recreate_not_overriding():
     key_names = ['mykey1', 'mykey2']
     bucket = _create_keys(keys=key_names)
 
+    time.sleep( 2 )
     li = bucket.list()
 
     names = [e.name for e in list(li)]
@@ -4369,8 +4373,8 @@ def _simple_http_req_100_cont(host, port, is_secure, method, resource):
     try:
         data = s.recv(1024)
     except socket.error, msg:
-        print 'got response: ', msg
-        print 'most likely server doesn\'t support 100-continue'
+        print( 'got response: ', msg )
+        print( 'most likely server doesn\'t support 100-continue' )
 
     s.close()
     l = data.split(' ')
@@ -4902,7 +4906,7 @@ def test_region_copy_object():
         dest_conn = dest.connection
 
         dest_bucket = get_new_bucket(dest)
-        print 'created new dest bucket ', dest_bucket.name
+        print( 'created new dest bucket ', dest_bucket.name )
         region_sync_meta(targets.main, dest)
 
         for file_size in (1024, 1024 * 1024, 10 * 1024 * 1024,
@@ -4913,26 +4917,24 @@ def test_region_copy_object():
                 conn = r.connection
 
                 bucket = get_new_bucket(r)
-                print 'created bucket', bucket.name
+                print( 'created bucket', bucket.name )
                 region_sync_meta(targets.main, r)
 
                 content = 'testcontent'
 
-                print 'creating key=testobj', 'bucket=',bucket.name
+                print( 'creating key=testobj', 'bucket=',bucket.name )
 
                 key = bucket.new_key('testobj')
                 fp_a = FakeWriteFile(file_size, 'A')
                 key.set_contents_from_file(fp_a)
 
-                print 'calling region_sync_meta'
+                print( 'calling region_sync_meta' )
 
                 region_sync_meta(targets.main, r)
 
-                print 'dest_bucket=', dest_bucket.name, 'key=', key.name
+                print( 'dest_bucket=', dest_bucket.name, 'key=', key.name )
 
                 dest_key = dest_bucket.copy_key('testobj-dest', bucket.name, key.name)
-
-                print
 
                 # verify dest
                 _verify_atomic_key_data(dest_key, file_size, 'A')
@@ -4944,7 +4946,7 @@ def test_region_copy_object():
                 temp_key = bucket.get_key(key.name)
                 assert temp_key == None
 
-                print 'removing bucket', bucket.name
+                print( 'removing bucket', bucket.name )
                 conn.delete_bucket(bucket)
 
                 # confirm that the bucket was deleted as expected

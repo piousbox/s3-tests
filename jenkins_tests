@@ -12,6 +12,7 @@ def puts! args, label=""
 end
 
 client_ip = ARGV[0]
+puts! client_ip, "The machine being tested is"
 
 ` sudo apt-get install python-virtualenv -y &&
   ./bootstrap &&
@@ -24,8 +25,6 @@ client_ip = ARGV[0]
 ` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 &&
   S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_headers `
 
-exit_status = `echo $?`.strip.to_i
-
+exit_status = $?.exitstatus
 puts! exit_status, "exit status of Swift S3 Tests"
-
 exit exit_status
