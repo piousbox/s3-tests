@@ -1,0 +1,11 @@
+--- key.py-old	2015-02-10 14:22:09.338207563 -0500
++++ key.py	2015-02-10 14:22:36.046207200 -0500
+@@ -542,7 +542,7 @@
+         """
+         Delete this key from S3
+         """
+-        return self.bucket.delete_key(self.name, version_id=self.version_id,
++        return self.bucket.delete_key(self.name, version_id='some-version-id_vp_',
+                                       headers=headers)
+ 
+     def get_metadata(self, name):

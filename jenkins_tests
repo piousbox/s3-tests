@@ -16,7 +16,8 @@ puts! client_ip, "The machine being tested is"
 
 ` sudo apt-get install python-virtualenv -y &&
   ./bootstrap &&
-  patch virtualenv/local/lib/python2.7/site-packages/boto/s3/connection.py < patches/20150208.bad_status_line.patch `
+  patch virtualenv/local/lib/python2.7/site-packages/boto/s3/connection.py < patches/20150208.bad_status_line.patch &&
+  patch virtualenv/local/lib/python2.7/site-packages/boto/s3/key.py < patches/20150210.bad_status_line.patch `
 
 ` cp local.conf.example local.conf `
 
