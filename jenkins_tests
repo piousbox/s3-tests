@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require 'inifile'
+
 if 1 != ARGV.length
   puts "Usage: ./jenkins_tests x.x.x.x"
   puts "where x.x.x.x is the IP of the machine under test"
@@ -20,12 +22,30 @@ puts! client_ip, "The machine being tested is"
   patch virtualenv/local/lib/python2.7/site-packages/boto/s3/key.py < patches/20150210.bad_status_line.patch `
 
 ` cp local.conf.example local.conf `
-
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
+
+# flush interval should be 1
+file = IniFile.load '/opt/nedge/etc/ccow/auditd.ini'
+` cp /opt/nedge/etc/ccow/auditd.ini /opt/nedge/etc/ccow/auditd.ini-bk `
+file['statsite']['flush_interval'] = 1
+file.write()
+if File.directory?( '/opt/nedge/nmf/etc' )
+  ` /opt/nedge/nmf/nefadm restart auditserv `
+else
+  ` /opt/nedge/src/nmf/nefadm restart auditserv `
+end
 
 ` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 &&
   S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_headers `
-
 exit_status = $?.exitstatus
 puts! exit_status, "exit status of Swift S3 Tests"
+
+# revert auditserv flush_interval config
+` cp /opt/nedge/etc/ccow/auditd.ini-bk /opt/nedge/etc/ccow/auditd.ini `
+if File.directory?( '/opt/nedge/nmf/etc' )
+  ` /opt/nedge/nmf/nefadm restart auditserv `
+else
+  ` /opt/nedge/src/nmf/nefadm restart auditserv `
+end
+
 exit exit_status
