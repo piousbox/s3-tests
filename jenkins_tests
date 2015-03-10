@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require 'inifile'
+# require 'inifile'
 
 if 1 != ARGV.length
   puts "Usage: ./jenkins_tests x.x.x.x"
