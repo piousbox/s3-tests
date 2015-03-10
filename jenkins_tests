@@ -24,28 +24,31 @@ puts! client_ip, "The machine being tested is"
 ` cp local.conf.example local.conf `
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
 
-# flush interval should be 1
-file = IniFile.load '/opt/nedge/etc/ccow/auditd.ini'
-` cp /opt/nedge/etc/ccow/auditd.ini /opt/nedge/etc/ccow/auditd.ini-bk `
-file['statsite']['flush_interval'] = 1
-file.write()
-if File.directory?( '/opt/nedge/nmf/etc' )
-  ` /opt/nedge/nmf/nefadm restart auditserv `
-else
-  ` /opt/nedge/src/nmf/nefadm restart auditserv `
-end
+## See /opt/nedge/src/nmf/lib/s3/bin/auditserv_set_flush_interval
+# flush_interval = 1
+# file = IniFile.load '/opt/nedge/etc/ccow/auditd.ini'
+# ` cp /opt/nedge/etc/ccow/auditd.ini /opt/nedge/etc/ccow/auditd.ini-bk `
+# file['statsite']['flush_interval'] = flush_interval
+# file.write()
+# if File.directory?( '/opt/nedge/nmf/etc' )
+#   ` /opt/nedge/nmf/nefadm restart auditserv `
+# else
+#   ` /opt/nedge/src/nmf/nefadm restart auditserv `
+# end
+
 
 ` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 &&
   S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_headers `
 exit_status = $?.exitstatus
 puts! exit_status, "exit status of Swift S3 Tests"
 
-# revert auditserv flush_interval config
-` cp /opt/nedge/etc/ccow/auditd.ini-bk /opt/nedge/etc/ccow/auditd.ini `
-if File.directory?( '/opt/nedge/nmf/etc' )
-  ` /opt/nedge/nmf/nefadm restart auditserv `
-else
-  ` /opt/nedge/src/nmf/nefadm restart auditserv `
-end
+## See /opt/nedge/src/nmf/lib/s3/bin/auditserv_restore_settings
+# ` cp /opt/nedge/etc/ccow/auditd.ini-bk /opt/nedge/etc/ccow/auditd.ini `
+# if File.directory?( '/opt/nedge/nmf/etc' )
+#   ` /opt/nedge/nmf/nefadm restart auditserv `
+# else
+#   ` /opt/nedge/src/nmf/nefadm restart auditserv `
+# end
+
 
 exit exit_status
