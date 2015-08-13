@@ -1,6 +1,9 @@
 #!/usr/bin/ruby
 
-# require 'inifile'
+require 'httparty'
+require 'json'
+
+SLEEP_INTERVAL = 6
 
 if 1 != ARGV.length
   puts "Usage: ./jenkins_tests x.x.x.x"
@@ -25,31 +28,21 @@ puts! client_ip, "The machine being tested is"
 ` cp local.conf.example local.conf `
 ` sed -i 's/<machine-being-tested>/#{client_ip}/' local.conf `
 
-## See /opt/nedge/src/nmf/lib/s3/bin/auditserv_set_flush_interval
-# flush_interval = 1
-# file = IniFile.load '/opt/nedge/etc/ccow/auditd.ini'
-# ` cp /opt/nedge/etc/ccow/auditd.ini /opt/nedge/etc/ccow/auditd.ini-bk `
-# file['statsite']['flush_interval'] = flush_interval
-# file.write()
-# if File.directory?( '/opt/nedge/nmf/etc' )
-#   ` /opt/nedge/nmf/nefadm restart auditserv `
-# else
-#   ` /opt/nedge/src/nmf/nefadm restart auditserv `
-# end
-
+# store old flush interval
+result = HTTParty.get( "http://#{client_ip}:8080/sysconfig/auditd/flushInterval", :headers => { 'authorization' => "Basic YWRtaW46bmV4ZW50YQ==" } )
+@old_flush_interval = JSON.parse( result.body )['response']['value']
+puts! @old_flush_interval, "Old flush interval is"
+# set flush interval to 1
+HTTParty.put "http://#{client_ip}:8080/sysconfig/ccowgw/flushInterval", :headers => { 'authorization' => "Basic YWRtaW46bmV4ZW50YQ==" }, :body => { 'value' => 1 }
+sleep SLEEP_INTERVAL
 
 ` S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_s3 &&
   S3TEST_CONF=local.conf ./virtualenv/bin/nosetests s3tests.functional.test_headers `
 exit_status = $?.exitstatus
 puts! exit_status, "exit status of Swift S3 Tests"
 
-## See /opt/nedge/src/nmf/lib/s3/bin/auditserv_restore_settings
-# ` cp /opt/nedge/etc/ccow/auditd.ini-bk /opt/nedge/etc/ccow/auditd.ini `
-# if File.directory?( '/opt/nedge/nmf/etc' )
-#   ` /opt/nedge/nmf/nefadm restart auditserv `
-# else
-#   ` /opt/nedge/src/nmf/nefadm restart auditserv `
-# end
-
+# reset flush interval
+HTTParty.put "http://#{client_ip}:8080/sysconfig/auditd/flushInterval", :headers => { 'authorization' => "Basic YWRtaW46bmV4ZW50YQ==" }, :body => { 'value' => @old_flush_interval }
+sleep SLEEP_INTERVAL
 
 exit exit_status
